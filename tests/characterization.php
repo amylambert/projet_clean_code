@@ -106,17 +106,19 @@ $tests->near(100.0, $result['result'], 'three day pass discount is 20 euros');
 // ---------------------------------------------------------------------------
 // 2. Ticket #104 : câblage par défaut (BookingServiceFactory)
 // ---------------------------------------------------------------------------
+// La ligne "Payment processed in ... seconds" (durée du paiement) s'affiche entre PAYMENT et SQL.
+// Sa valeur change à chaque exécution : on ne vérifie que son premier mot ("Payment").
 
 $result = run(fn () => $service->confirm(createBooking('standard', 'day', 50.0, 2), 'stripe'));
 $tests->same(
-    ['PAYMENT', 'SQL', 'EMAIL', 'LOYALTY', 'ANALYTICS', 'SMS'],
+    ['PAYMENT', 'Payment', 'SQL', 'EMAIL', 'LOYALTY', 'ANALYTICS', 'SMS'],
     outputPrefixes($result['output']),
     'default wiring: the four reactions run after SQL INSERT, email first'
 );
 
 $result = run(fn () => $service->confirm(createBooking('standard', 'day', 50.0, 2, null), 'stripe'));
 $tests->same(
-    ['PAYMENT', 'SQL', 'EMAIL', 'LOYALTY', 'ANALYTICS'],
+    ['PAYMENT', 'Payment', 'SQL', 'EMAIL', 'LOYALTY', 'ANALYTICS'],
     outputPrefixes($result['output']),
     'default wiring: no SMS when the customer has no phone number'
 );
@@ -157,11 +159,11 @@ $tests->same('', $result['output'], 'SmsObserver sends nothing when the phone nu
 $spy = new SpyObserver();
 $result = run(fn () => createServiceWith($spy)->confirm(createBooking('standard', 'day', 50.0, 2), 'stripe'));
 $tests->same(1, $spy->callCount, 'a new observer is notified without any change in BookingService');
-$tests->same(['PAYMENT', 'SQL'], outputPrefixes($result['output']), 'BookingService no longer sends the email itself');
+$tests->same(['PAYMENT', 'Payment', 'SQL'], outputPrefixes($result['output']), 'BookingService no longer sends the email itself');
 
 $spy = new SpyObserver();
 $result = run(fn () => createServiceWith($spy)->confirm(createBooking(), 'paypal'));
-$tests->same('Unknown payment method', $result['error']?->getMessage(), 'unknown payment method is still rejected');
+$tests->same('Invalid payment method.', $result['error']?->getMessage(), 'unknown payment method is still rejected');
 $tests->same(0, $spy->callCount, 'observers are not notified when the payment fails');
 
 $spy = new SpyObserver();
@@ -172,5 +174,17 @@ $tests->near(100.0, $result['result'], 'confirm() still returns the total when a
 $tests->same('confirmed', $booking->status, 'the booking stays confirmed when an observer fails');
 $tests->same(1, $spy->callCount, 'observers after a failing one are still notified');
 $tests->same(true, str_contains($result['output'], 'OBSERVER FAILED FailingObserver: boom'), 'the observer failure is reported');
+
+// ---------------------------------------------------------------------------
+// 5. Tickets #103 + #104 ensemble : un paiement PayFast déclenche aussi les observateurs
+// ---------------------------------------------------------------------------
+
+$spy = new SpyObserver();
+$booking = createBooking('standard', 'day', 50.0, 2);
+$result = run(fn () => createServiceWith($spy)->confirm($booking, 'payfast'));
+$tests->near(100.0, $result['result'], 'payfast payment returns the same total as stripe');
+$tests->same('confirmed', $booking->status, 'booking is confirmed after a payfast payment');
+$tests->same(1, $spy->callCount, 'observers are notified after a payfast payment');
+$tests->same(true, str_contains($result['output'], 'PAYMENT payfast_pf_'), 'payfast transaction id is printed');
 
 $tests->summary();

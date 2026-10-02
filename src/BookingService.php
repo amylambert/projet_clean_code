@@ -7,10 +7,10 @@ final class BookingService
     private $paymentProcessor;
     private $timer;
 
-    public function __construct(){
+    public function __construct(private BookingConfirmationSubject $confirmationSubject)
+    {
         $this->paymentProcessor = new PaymentProcessor();
         $this->timer = new Timer();
-        private BookingConfirmationSubject $confirmationSubject;
     }
 
     public function confirm(Booking $booking, string $paymentMethod = 'stripe'): float
