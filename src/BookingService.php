@@ -24,14 +24,15 @@ final class BookingService
             $total += $item->ticket->price * $item->quantity;
         }
 
-        // Ancienne règle VIP : remise fixe de 10 %.
+
         if ($booking->customer->type === 'vip') {
-            $total *= 0.90;
+            $vip = new Vip();
+            $total = $vip->applyDiscount($total);
         }
 
-        // Ancienne règle Pass 3 jours : remise fixe de 10 euros.
         if ($booking->passType === '3days') {
-            $total -= 10.0;
+            $threeDaysDiscount = new ThreeDaysDiscount();
+            $total = $threeDaysDiscount->applyDiscount($total);
         }
 
         if ($paymentMethod === 'stripe') {
