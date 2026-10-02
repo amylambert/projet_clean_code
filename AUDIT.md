@@ -27,9 +27,9 @@ TOTAL FINAL: 143.82
 
 ## 3. Nos trois priorités
 
-1.
-2.
-3.
+1. Déplacement des gardes fous actuels pour rendre les fichiers indépendants
+2. Ajout de gardes fous manquant pour éviter les crash
+3. Séparation de BookingService.php pour séparer les responsabilités
 
 ## 4. Risques avant refactoring
 
