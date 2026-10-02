@@ -6,7 +6,7 @@ class Vip implements IDiscount
     {
         if ($total < 100) {
             return $total * 0.95;
-        } elseif ($total <= 100 && $total < 300) {
+        } elseif ($total >= 100 && $total < 300) {
             return $total * 0.90;
         }
 

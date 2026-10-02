@@ -11,4 +11,9 @@ final class Customer
         public string $type = 'standard'
     ) {
     }
+
+    public function hasPhoneNumber(): bool
+    {
+        return $this->phone !== null && $this->phone !== '';
+    }
 }

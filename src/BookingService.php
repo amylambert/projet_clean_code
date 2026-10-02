@@ -10,6 +10,7 @@ final class BookingService
     public function __construct(){
         $this->paymentProcessor = new PaymentProcessor();
         $this->timer = new Timer();
+        private BookingConfirmationSubject $confirmationSubject;
     }
 
     public function confirm(Booking $booking, string $paymentMethod = 'stripe'): float
@@ -49,8 +50,7 @@ final class BookingService
 
         echo "SQL INSERT booking={$booking->id} total={$total} status={$booking->status}" . PHP_EOL;
 
-        $emailService = new EmailService();
-        $emailService->sendConfirmation($booking->customer->email, $booking->id);
+        $this->confirmationSubject->notify(new BookingConfirmedEvent($booking, $total));
 
         return $total;
     }
