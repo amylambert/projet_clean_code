@@ -13,3 +13,7 @@ require_once __DIR__ . '/src/SmsClient.php';
 require_once __DIR__ . '/src/LoyaltyService.php';
 require_once __DIR__ . '/src/AnalyticsClient.php';
 require_once __DIR__ . '/src/BookingService.php';
+require_once __DIR__ . '/src/paymentAdapters/IPaymentAdapter.php';
+require_once __DIR__ . '/src/paymentAdapters/StripeAdapter.php';
+require_once __DIR__ . '/src/paymentAdapters/PayFastAdapter.php';
+require_once __DIR__ . '/src/PaymentProcessor.php';
