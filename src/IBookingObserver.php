@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-interface BookingObserver
+interface IBookingObserver
 {
-    public function update(BookingConfirmedEvent $event): void;
+    public function onBookingConfirmed(BookingConfirmedEvent $event): void;
 }
