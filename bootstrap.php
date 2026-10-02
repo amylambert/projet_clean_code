@@ -20,3 +20,4 @@ require_once __DIR__ . '/src/paymentAdapters/IPaymentAdapter.php';
 require_once __DIR__ . '/src/paymentAdapters/StripeAdapter.php';
 require_once __DIR__ . '/src/paymentAdapters/PayFastAdapter.php';
 require_once __DIR__ . '/src/PaymentProcessor.php';
+require_once __DIR__ . '/src/Timer.php';

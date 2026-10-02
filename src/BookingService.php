@@ -5,9 +5,11 @@ declare(strict_types=1);
 final class BookingService
 {
     private $paymentProcessor;
+    private $timer;
 
     public function __construct(){
         $this->paymentProcessor = new PaymentProcessor();
+        $this->timer = new Timer();
     }
 
     public function confirm(Booking $booking, string $paymentMethod = 'stripe'): float
@@ -41,7 +43,7 @@ final class BookingService
             $total = $threeDaysDiscount->applyDiscount($total);
         }
 
-        $this->paymentProcessor->processPayment($paymentMethod, $total);
+        $this->timeProcessPayment($paymentMethod, $total);
 
         $booking->status = 'confirmed';
 
@@ -51,5 +53,13 @@ final class BookingService
         $emailService->sendConfirmation($booking->customer->email, $booking->id);
 
         return $total;
+    }
+
+    function timeProcessPayment(string $paymentMethod, float $amount): void
+    {
+        $this->timer->start();
+        $this->paymentProcessor->processPayment($paymentMethod, $amount);
+        $this->timer->stop();
+        echo "Payment processed in {$this->timer->getElapsedTime()} seconds" . PHP_EOL;
     }
 }
