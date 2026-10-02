@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 final class LoyaltyObserver implements IBookingObserver
 {
-    private const int POINTS_PER_EURO = 1;
+    private const POINTS_PER_EURO = 1;
 
     public function __construct(private LoyaltyService $loyaltyService)
     {

@@ -25,7 +25,7 @@ $booking = new Booking(
 
 $booking->addItem(new BookingItem($dayTicket, 2));
 
-$service = new BookingService();
+$service = BookingServiceFactory::create();
 $total = $service->confirm($booking, 'stripe');
 
 echo 'TOTAL FINAL: ' . number_format($total, 2, '.', '') . PHP_EOL;
