@@ -16,7 +16,10 @@ final class PaymentProcessor
         foreach (PAYMENT_ADAPTERS as $key => $adapter) {
             if ($key === $paymentMethod) {
                 $transactionId = $adapter->pay($amount);
-                echo "PAYMENT {$transactionId}" . PHP_EOL;
+                if ($transactionId === null) {
+                    throw new RuntimeException('Payment failed');
+                }
+                echo "PAYMENT {$transactionId} successful" . PHP_EOL;
                 return;
             }
         }
