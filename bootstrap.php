@@ -16,3 +16,7 @@ require_once __DIR__ . '/src/BookingService.php';
 require_once __DIR__ . '/src/IDiscount.php';
 require_once __DIR__ . '/src/Vip.php';
 require_once __DIR__ . '/src/ThreeDaysDiscount.php';
+require_once __DIR__ . '/src/paymentAdapters/IPaymentAdapter.php';
+require_once __DIR__ . '/src/paymentAdapters/StripeAdapter.php';
+require_once __DIR__ . '/src/paymentAdapters/PayFastAdapter.php';
+require_once __DIR__ . '/src/PaymentProcessor.php';
